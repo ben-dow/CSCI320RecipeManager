@@ -10,7 +10,7 @@ pip install  sqlalchemy psycopg2
 ```
 
 ### 2. Add Credentials
-1. Copy credentials.py.sample
+1. Copy credentials.py.sample to credentials.py
 2. Add Credentials for Database
 
 ### 3. Run Script
