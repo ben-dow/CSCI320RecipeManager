@@ -6,4 +6,11 @@ from credentials import username, password
 
 db_string = "postgresql://" + username + ":" + password + "@reddwarf.cs.rit.edu:5432/p320_03d"
 db = create_engine(db_string)
+Session = sessionmaker()
+Session.configure(bind=db)
 
+
+from models import *
+
+# Create the Models in the Database
+Base.metadata.create_all(db)

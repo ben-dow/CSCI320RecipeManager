@@ -8,6 +8,7 @@ Built with Python3.9
 ```
 pip install  sqlalchemy psycopg2
 ```
+[SqlAlchemy ORM Tutorial](https://docs.sqlalchemy.org/en/13/orm/tutorial.html)
 
 ### 2. Add Credentials
 1. Copy credentials.py.sample to credentials.py
