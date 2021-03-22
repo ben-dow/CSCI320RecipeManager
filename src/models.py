@@ -23,7 +23,7 @@ class Recipe(Base):
     cook_time = Column(Time)
     name = Column(String) # should this be nullable=False ?
     description = Column(Text)
-    difficulty = Column(Enum) # uncertain what the type should be
+    difficulty = Column(String) # general requirements would like us to use the strings, not representative numbers
 
 # @jew4731's second stab at creating a table
 class Category(Base):
