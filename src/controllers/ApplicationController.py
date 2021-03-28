@@ -6,22 +6,20 @@ from src.controllers.authentication import authenticate
 from src.controllers.util import bcolors, command_input
 
 
-
-
 def functionality_flow(app_session):
-    command = command_input(bcolors.BOLD + "What would you like todo?" + bcolors.ENDC, ["Search", "Cook", "RecipeEditor", "Pantry", "Logout"])
+    command = command_input(bcolors.BOLD + "What would you like todo?" + bcolors.ENDC,
+                            ["Search", "Cook", "RecipeEditor", "Pantry", "Logout"])
 
+    # Emulate a Switch Statement
     options = {
         "Search": search,
         "Cook": cook,
         "RecipeEditor": RecipeEditor,
         "Pantry": pantry,
     }
-
     if command == "Logout":
         app_session.logout = True
     else:
-
         options[command](app_session)
 
 

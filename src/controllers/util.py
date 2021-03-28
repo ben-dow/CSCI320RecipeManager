@@ -1,3 +1,5 @@
+
+# Provide Text and Possible Options, will return the command entered when a valid one is entered
 def command_input(question_text, options):
     command = ""
     while command not in options:
@@ -7,6 +9,7 @@ def command_input(question_text, options):
     return command
 
 
+# ANSI Codes for Colors
 class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
