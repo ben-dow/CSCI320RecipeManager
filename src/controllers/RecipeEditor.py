@@ -4,7 +4,6 @@ from src.controllers.util import bcolors, command_input
 
 
 def RecipeEditor(app_session):
-    os.system('cls' if os.name == 'nt' else 'clear')
     print(bcolors.HEADER + "Recipe Editor" + bcolors.ENDC)
     command = ""
     while command != "Exit":
