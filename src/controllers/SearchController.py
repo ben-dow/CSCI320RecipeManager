@@ -1,2 +1,5 @@
+from src.controllers.util import bcolors
+
+
 def search(app_session):
-    pass
+    print(bcolors.HEADER + "Search for  Recipe" + bcolors.ENDC)

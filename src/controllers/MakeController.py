@@ -1,2 +1,5 @@
-def make(app_session):
-    pass
+from src.controllers.util import bcolors
+
+
+def cook(app_session):
+    print(bcolors.HEADER + "Cook a Recipe" + bcolors.ENDC)
