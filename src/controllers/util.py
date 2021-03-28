@@ -1,7 +1,9 @@
 def command_input(question_text, options):
     command = ""
     while command not in options:
-        command = input(question_text + " (" + "/".join(options) + ") ")
+        if command != "":
+            print(bcolors.FAIL + "INVALID COMMAND" + bcolors.ENDC)
+        command = input(question_text + " (" + ",".join(options) + ") ")
     return command
 
 

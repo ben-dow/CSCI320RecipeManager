@@ -3,6 +3,14 @@ from sqlalchemy.sql.functions import current_date
 from src.controllers.util import command_input, bcolors
 from src.models import User
 
+
+class ApplicationSession:
+    def __init__(self, session, user):
+        self.session = session,
+        self.user = user
+        self.logout = False
+
+
 def loginInput(session):
     validUserFound = False
     while not validUserFound:
@@ -37,7 +45,7 @@ def registerInput(session):
         else:
             print(bcolors.OKBLUE + "Successfully Registered!" + bcolors.ENDC)
             valid_username = True
-            new_user = User(username=username, password=password, creation_date = current_date())
+            new_user = User(username=username, password=password, creation_date=current_date())
             session.add(new_user)
             session.commit()
 
@@ -50,4 +58,4 @@ def authenticate(session):
         registerInput(session)
         print("Please Login!")
 
-    return loginInput(session)
+    return ApplicationSession(session, loginInput(session))
