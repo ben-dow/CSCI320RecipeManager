@@ -1,0 +1,7 @@
+# Make a copy of this and add your filepaths to the csv files
+PP_recipes = r''
+PP_users = r''
+RAW_interactions = r''
+RAW_recipes = r''
+ingr_map = r''
+user_pass = r''
