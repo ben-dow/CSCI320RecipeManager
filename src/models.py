@@ -40,6 +40,7 @@ class Recipe(Base):
     difficulty = Column(Enum(DifficultyEnum))
 
     Steps = relationship("Step")
+    Ingredients = relationship("RecipeIngredients")
 
 class Category(Base):
     __tablename__ = "categories"
@@ -78,8 +79,10 @@ class RecipeIngredients(Base):
     __tablename__ = "recipe_ingredients"
 
     recipe_id = Column(Integer, ForeignKey('recipes.id'), primary_key=True)
-    user_id = Column(Integer, ForeignKey('users.id'), primary_key=True)
+    ingredient_id = Column(Integer, ForeignKey('ingredients.id'), primary_key=True)
     amount = Column(Float, nullable=False)  # float or integer?
+
+    Ingredient = relationship("Ingredient")
 
 
 class UserPantry(Base):
