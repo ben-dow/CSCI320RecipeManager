@@ -25,6 +25,8 @@ class User(Base):
     last_access_date = Column(Date)
 
     Recipes = relationship("Recipe")
+    UserPantry = relationship("UserPantry")
+
 
 
 # @jew4731's stab at creating a table. Need constraints
@@ -64,6 +66,8 @@ class Ingredient(Base):
     aisle = Column(String)
     name = Column(String)
 
+    userPantry = relationship("UserPantry")
+
 
 class CookedBy(Base):
     __tablename__ = "cookedby"
@@ -96,3 +100,6 @@ class UserPantry(Base):
     purchase_date = Column(Date)
     quantity_bought = Column(Float)  # not required
     current_quantity = Column(Float)  # scale can be float, so this must be as well
+
+
+
