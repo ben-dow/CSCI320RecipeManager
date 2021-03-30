@@ -96,3 +96,5 @@ class UserPantry(Base):
     purchase_date = Column(Date)
     quantity_bought = Column(Float)  # not required
     current_quantity = Column(Float)  # scale can be float, so this must be as well
+
+    ingredient = relationship("Ingredient", back_populates="UserPantry")
