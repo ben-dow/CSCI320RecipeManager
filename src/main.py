@@ -3,7 +3,7 @@ from sqlalchemy.orm import sessionmaker
 
 from src.controllers.ApplicationController import mainApplicationFlow
 from src.credentials import username as user, password as passwrd
-from models import *
+from src.models import *
 
 # Configure Database:
 

@@ -6,7 +6,7 @@ from src.models import User
 
 class ApplicationSession:
     def __init__(self, session, user):
-        self.session = session,
+        self.session = session
         self.user = user
         self.logout = False
 
