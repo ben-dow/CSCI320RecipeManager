@@ -1,4 +1,6 @@
 from src.controllers.util import bcolors, command_input
+from src.models import Category, UserPantry, Ingredient, CookedBy, Recipe
+from sqlalchemy import select
 
 
 def pantry(app_session):
@@ -14,15 +16,19 @@ def pantry(app_session):
 
 
 
-def get_users_pantry(app_session): ## Struggling to figure out how to
+def get_users_pantry(app_session): ## this returns an Instrumented List. Can't access
+                                   ## the ingredient names because Instrumented List doesn't
+                                    ## have
     user = app_session.user
-    pantry = user.UserPantry
+    pantry = user.Pantry
     return pantry
 
 
 
 def add(app_session):
     pantry = get_users_pantry(app_session)
+    print(pantry)
+    pass
 
 
     command=""
@@ -37,11 +43,13 @@ def add(app_session):
 
 def remove(app_session):
     pantry = get_users_pantry(app_session)
+    print(pantry)
+    pass
 
     print(bcolors.BOLD + "Please enter the number of the ingredient you want to remove. Type \"exit\" to close the Pantry Manager.")
     command=""
     for idx, r in enumerate(pantry):
-        print(bcolors.BOLD + str(idx) + bcolors.ENDC + '.' + " " + str(r.join(Ingredient).name))
+        print(bcolors.BOLD + str(idx) + bcolors.ENDC + '.' + " " + str(r.name))
     command = command_input(bcolors.BOLD + "Select the ingredient you want to remove (or type exit to leave this menu)" + bcolors.ENDC,
                              ["exit"])
     if command == "exit":
