@@ -15,7 +15,6 @@ def pretty_print_recipe(recipe):
     print(bcolors.BOLD + "Cook Time: " + bcolors.ENDC + str(recipe.cook_time) + " minutes")
 
 
-
 # ANSI Codes for Colors
 class bcolors:
     HEADER = '\033[95m'

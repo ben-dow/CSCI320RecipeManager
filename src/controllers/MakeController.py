@@ -12,7 +12,7 @@ NOTE: This user is a good choice for testing these functions:
 
 id:         1676
 username:   Joill1955
-password:   ohmoeZ81
+password:   ohmoeZ8l
 """
 
 def cook(app_session):
@@ -27,66 +27,71 @@ def cook(app_session):
             make_recipe(app_session)
 
         if command == "ViewCookedRecipes":
-            view(app_session)
+            view_cooked(app_session)
 
     print(bcolors.OKBLUE + "Exiting Recipe Cooker" + bcolors.ENDC)
     return
 
 
 def make_recipe(app_session):
-    print(bcolors.BOLD + bcolors.UNDERLINE + "Cook a Recipe" + bcolors.ENDC)
+    print(bcolors.BOLD + bcolors.UNDERLINE + "Cook a Recipe" + bcolors.ENDC)    # header
     recipe_list = get_users_recipes(app_session)  # TODO: Replace with search function
 
     if len(recipe_list) == 0: # if no recipes, return to cook menu
         print(bcolors.FAIL + "No Recipes Found." + bcolors.ENDC)
         return
 
-    print("Please Enter the Number of the Recipe you Would Like to Cook. (Or Type \"Exit\" to leave this menu)")
-
+    # pick a recipe from the search criteria. TODO: Allow to search again
     for idx, r in enumerate(recipe_list):  # print out the available choices
         print(bcolors.BOLD + str(idx) + bcolors.ENDC + '.' + " " + r.name)
+    print("Please Enter the Number of the Recipe you Would Like to Cook. (Or Type \"Exit\" to leave this menu)")
     command = command_input(bcolors.BOLD + "Which Recipe?" + bcolors.ENDC,
                             list(str(x) for x in range(0, len(recipe_list))) + ["Exit"])
 
     if command == "Exit":
         return
 
-    recipe = recipe_list[int(command)]  # get the recipe itself
-
+    # get the recipe
     print(bcolors.OKGREEN + "Cooking Recipe:" + bcolors.ENDC)
-    pretty_print_recipe(recipe)  # show info about the recipe
+    recipe = recipe_list[int(command)]
+    pretty_print_recipe(recipe)
 
     # TODO: Print ingredients needed and their current quantity
     print(bcolors.BOLD + "Ingredients Required" + bcolors.ENDC)
-    ingredients = get_recipe_ingredients_quantity(app_session, recipe)
-
+    get_quantity(app_session, recipe)
 
     # get the scale from user input
+    scale = get_scale()
+    if scale == float():    # or leave if they wanted to exit
+        return
+
+    # TODO:
+
+
+def get_scale():
     scale = float()
-    while command != "Exit" and scale == float():
+    command = ""
+    while scale == float():
         print("Please Enter the Scale of the Recipe. (Or \"Exit\" to leave this menu)")
         command = input(bcolors.BOLD + "Scale?" + bcolors.ENDC)
 
-        if command == "Exit":
-            return
+        if command == "Exit":   # exit
+            return float()
 
-        try:
+        try:    # check for valid input
             scale = float(command)
         except ValueError:
             print(bcolors.FAIL + "INVALID SCALE. Must be an integer or decimal number." + bcolors.ENDC)
 
-    scale = float(command)
-
-
-
+    return scale
 
 # Print current quantity of ingredients
-def get_recipe_ingredients_quantity(app_session, recipe):
+def get_quantity(app_session, recipe):
     # get list of [(ingredient.name, ingredient.count)] from user's pantry
     ingredients = app_session.session.query(Ingredient.name, count(UserPantry.current_quantity))\
-                                    .filter(getattr(UserPantry, 'user_id') == app_session.user.id)\
-                                    .filter(getattr(UserPantry, 'ingredient_id') in (i.id for i in recipe.Ingredients))\
-                                    .filter(getattr(UserPantry, 'expiration_date') < current_date())\
+                                    .filter(UserPantry.user_id == app_session.user.id)\
+                                    .filter(UserPantry.ingredient_id.in_(i.id for i in recipe.Ingredients))\
+                                    .filter(UserPantry.expiration_date < current_date())\
                                     .group_by(Ingredient.name).order_by(Ingredient.name.asc())
     """
     select i.name, sum(p.current_quantity) Quantity
@@ -95,7 +100,6 @@ def get_recipe_ingredients_quantity(app_session, recipe):
     group by i.name
     order by i.name asc
     """
-
     # print each ingredient's name and current quantity
     for name, quantity in ingredients:
         print(bcolors.BOLD + name + bcolors.ENDC + "\t" + str(quantity))
@@ -105,20 +109,28 @@ def get_recipe_ingredients_quantity(app_session, recipe):
 
 
 # View your previously cooked recipes.
-# TODO: Fix query statement
-def view(app_session):
+def view_cooked(app_session):
     print(bcolors.BOLD + bcolors.UNDERLINE + "View Cooked Recipes" + bcolors.ENDC)
 
     # get cooked recipes
     cooked = app_session.session.query(Recipe.name, CookedBy.scale, CookedBy.cook_date, CookedBy.rating)\
-                                .filter(getattr(CookedBy, 'user_id') == app_session.user.id)\
-                                .order_by(Recipe.name.asc())
+                                .filter(CookedBy.user_id == app_session.user.id)\
+                                .filter(Recipe.id == CookedBy.recipe_id).order_by(CookedBy.cook_date.desc())
 
     # print each recipe and its data
+    idc = 1
     for name, scale, date, rating in cooked:
+        if idc % 10 == 0:   # Limit the number of responses shown
+            command = command_input(bcolors.OKGREEN + "Keep going?", ["Yes", "Exit"])
+            if command == "Exit":
+                break
         print(bcolors.BOLD + name + bcolors.ENDC)
-        print('\t' + "Scale: " + str(scale))
-        print('\t' + "Date Cooked: " + str(date))
-        print('\t' + "Rating:" + str(rating))
+        print("Scale: " + str(scale))
+        print("Date Cooked: " + str(date))
+        print("Rating:" + str(rating))
+
+        idc += 1
 
     return
+
+
