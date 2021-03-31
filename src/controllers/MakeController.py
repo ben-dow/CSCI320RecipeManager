@@ -65,9 +65,41 @@ def make_recipe(app_session):
     if scale == float():    # or leave if they wanted to exit
         return
 
-    # TODO:
+    # TODO: Check that there are enough ingredients to make the recipe; choose a different scale if not?
 
 
+    # TODO: Subtract the ingredients used from the recipe, print success message
+
+    return
+
+
+# Print current quantity of ingredients
+def get_quantity(app_session, recipe):
+    # TODO: Get ids of ingredients needed for the recipe
+    ingredient_ids = (ingr.name for ingr in recipe.Ingredients)
+    for i in ingredient_ids:
+        print(i)
+    # get list of [(ingredient.name, ingredient.count)] from user's pantry
+    ingredients = app_session.session.query(Ingredient.name, count(UserPantry.current_quantity))\
+                                    .filter(UserPantry.user_id == app_session.user.id)\
+                                    .filter(UserPantry.expiration_date > current_date())\
+                                    .group_by(Ingredient.name).order_by(Ingredient.name.asc())
+    """
+    select i.name, sum(p.current_quantity) Quantity
+    from ingredients as i, pantry as p
+    where i.id = p.ingredient_id and p.expiration_date > CURRENT_DATE
+    group by i.name
+    order by i.name asc
+    """
+    # print each ingredient's name and current quantity
+    """for name, quantity in ingredients:
+        print(bcolors.BOLD + name + bcolors.ENDC + "\t" + str(quantity))
+    """
+    # return list of ingredients to help with editing?
+    return ingredients
+
+
+# gets the scale from the user, or float() if they wish to exit.
 def get_scale():
     scale = float()
     command = ""
@@ -84,28 +116,6 @@ def get_scale():
             print(bcolors.FAIL + "INVALID SCALE. Must be an integer or decimal number." + bcolors.ENDC)
 
     return scale
-
-# Print current quantity of ingredients
-def get_quantity(app_session, recipe):
-    # get list of [(ingredient.name, ingredient.count)] from user's pantry
-    ingredients = app_session.session.query(Ingredient.name, count(UserPantry.current_quantity))\
-                                    .filter(UserPantry.user_id == app_session.user.id)\
-                                    .filter(UserPantry.ingredient_id.in_(i.id for i in recipe.Ingredients))\
-                                    .filter(UserPantry.expiration_date < current_date())\
-                                    .group_by(Ingredient.name).order_by(Ingredient.name.asc())
-    """
-    select i.name, sum(p.current_quantity) Quantity
-    from ingredients as i, pantry as p
-    where i.id = p.ingredient_id and p.expiration_date > CURRENT_DATE
-    group by i.name
-    order by i.name asc
-    """
-    # print each ingredient's name and current quantity
-    for name, quantity in ingredients:
-        print(bcolors.BOLD + name + bcolors.ENDC + "\t" + str(quantity))
-
-    # return list of ingredients to help with editing?
-    return ingredients
 
 
 # View your previously cooked recipes.
@@ -132,5 +142,3 @@ def view_cooked(app_session):
         idc += 1
 
     return
-
-
