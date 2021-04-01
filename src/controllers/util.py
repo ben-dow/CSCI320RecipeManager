@@ -8,11 +8,33 @@ def command_input(question_text, options):
     return command
 
 
+# Recipe Utils
 def pretty_print_recipe(recipe):
-    print(bcolors.BOLD + "Name: " + bcolors.ENDC + str(recipe.name))
-    print(bcolors.BOLD + "Description+: " + bcolors.ENDC + str(recipe.description))
-    print(bcolors.BOLD + "Difficulty: " + bcolors.ENDC + str(recipe.difficulty))
-    print(bcolors.BOLD + "Cook Time: " + bcolors.ENDC + str(recipe.cook_time) + " minutes")
+    print(bcolors.HEADER + "Recipe: " + recipe.name + bcolors.ENDC)
+    print_recipe_metadata(recipe)
+    print_recipe_steps(recipe)
+    print_recipe_ingredients(recipe)
+
+
+def print_recipe_metadata(recipe):
+    print(bcolors.BOLD + "About this Recipe" + bcolors.ENDC)
+    print('\t' + bcolors.BOLD + "Name: " + bcolors.ENDC + str(recipe.name))
+    print('\t' + bcolors.BOLD + "Description: " + bcolors.ENDC + str(recipe.description))
+    print('\t' + bcolors.BOLD + "Difficulty: " + bcolors.ENDC + str(recipe.difficulty))
+    print('\t' + bcolors.BOLD + "Servings: " + bcolors.ENDC + str(recipe.servings))
+    print('\t' + bcolors.BOLD + "Cook Time: " + bcolors.ENDC + str(recipe.cook_time) + " minutes")
+
+
+def print_recipe_steps(recipe):
+    print(bcolors.BOLD + "Steps:" + bcolors.ENDC)
+    for step in recipe.Steps:
+        print('\t' + bcolors.BOLD + str(step.step_nr) + ". " + bcolors.ENDC + step.instruction)
+
+
+def print_recipe_ingredients(recipe):
+    print(bcolors.BOLD + "Ingredients:" + bcolors.ENDC)
+    for i in recipe.Ingredients:
+        print('\t' + i.Ingredient.name + ": " + str(i.amount))
 
 
 # ANSI Codes for Colors
