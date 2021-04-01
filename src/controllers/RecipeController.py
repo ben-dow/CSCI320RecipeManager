@@ -2,7 +2,7 @@ import os
 
 from src.controllers.util import bcolors, command_input, pretty_print_recipe, print_recipe_metadata, print_recipe_steps, \
     print_recipe_ingredients
-from src.models import DifficultyEnum, Step, RecipeIngredients, Ingredient
+from src.models import DifficultyEnum, Step, RecipeIngredients, Ingredient, Recipe
 
 
 def RecipeController(app_session):
@@ -14,6 +14,11 @@ def RecipeController(app_session):
 
         if command == "Edit":
             edit(app_session)
+
+        if command == "Create":
+            create(app_session)
+        if command == "Delete":
+            delete(app_session)
 
     print(bcolors.OKBLUE + "Exiting Recipe Editor" + bcolors.ENDC)
 
@@ -27,22 +32,18 @@ def update_recipe_info(infoName, recipe, app_session):
     if infoName == "Name":
         newName = input(bcolors.BOLD + "Enter the new name for the recipe: " + bcolors.ENDC)
         recipe.name = newName
-        app_session.session.commit()
         print(bcolors.OKGREEN + "Change Successful" + bcolors.ENDC)
     elif infoName == "Description":
         description = input(bcolors.BOLD + "Enter the new description for the recipe: " + bcolors.ENDC)
         recipe.description = description
-        app_session.session.commit()
         print(bcolors.OKGREEN + "Change Successful" + bcolors.ENDC)
-    elif infoName == "CookTime":
+    elif infoName == "Cook Time":
         cookTime = input(bcolors.BOLD + "Enter the new description for the recipe: " + bcolors.ENDC)
         recipe.cook_time = int(cookTime)
-        app_session.session.commit()
         print(bcolors.OKGREEN + "Change Successful" + bcolors.ENDC)
     elif infoName == "Servings":
         servings = input(bcolors.BOLD + "Enter the new description for the recipe: " + bcolors.ENDC)
-        recipe.cook_time = int(servings)
-        app_session.session.commit()
+        recipe.servings = int(servings)
         print(bcolors.OKGREEN + "Change Successful" + bcolors.ENDC)
     elif infoName == "Difficulty":
         command = command_input("Enter the new Difficulty for the recipe: ",
@@ -57,17 +58,11 @@ def update_recipe_info(infoName, recipe, app_session):
             recipe.difficulty = DifficultyEnum.medium_hard
         elif command == "hard":
             recipe.difficulty = DifficultyEnum.hard
-        app_session.session.commit()
         print(bcolors.OKGREEN + "Change Successful" + bcolors.ENDC)
-
-    if infoName in ["Name", "Description", "CookTime", "Servings", "Difficulty"]:
-        print_recipe_metadata(recipe)
-
 
 def update_recipe_step(step, app_session):
     instruction = input(bcolors.BOLD + "Enter the new step instruction for the recipe: " + bcolors.ENDC)
     step.instruction = instruction
-    app_session.session.commit()
 
 
 def update_ingredient_amount(ingredient, app_session):
@@ -85,7 +80,15 @@ def print_ingredient_list_from_search(searchQuery, app_session):
 
 
 def create(app_session):
-    pass
+    print(bcolors.BOLD + bcolors.UNDERLINE + "Create a Recipe" + bcolors.ENDC)
+
+    recipe = Recipe()
+    app_session.user.Recipes.append(recipe)
+    app_session.session.commit()
+
+    edit_info(app_session, recipe)
+    edit_ingredients(app_session, recipe)
+    edit_steps(app_session,recipe)
 
 
 def edit(app_session):
@@ -127,6 +130,9 @@ def edit_info(app_session, recipe):
         command = command_input(bcolors.BOLD + "Which Piece of Information Would You Like to Edit?" + bcolors.ENDC,
                                 ["Name", "Description", "Difficulty", "Servings", "Cook Time", "Exit"])
         update_recipe_info(command, recipe, app_session)
+        app_session.session.commit()
+        print_recipe_metadata(recipe)
+
 
     if command == "Exit":
         return
@@ -146,6 +152,8 @@ def edit_steps(app_session, recipe):
                                     [str(s.step_nr) for s in recipe.Steps] + ["Exit"])
             if command != "Exit":
                 update_recipe_step(recipe.Steps[int(command) - 1], app_session)
+                app_session.session.commit()
+
 
         elif command == "2":
             step = Step(step_nr=len(recipe.Steps) + 1)
@@ -208,4 +216,25 @@ def edit_ingredients(app_session, recipe):
                 app_session.session.commit()
 
 def delete(app_session):
-    pass
+    recipes = get_users_recipes(app_session)
+
+    print(bcolors.BOLD + bcolors.UNDERLINE + "Delete a Recipe" + bcolors.ENDC)
+    print("Please Enter the Number of the Recipe you Would Like to Delete. (Or Type \"exit\" to leave this menu")
+
+    for idx, r in enumerate(recipes):
+        print(bcolors.BOLD + str(idx) + bcolors.ENDC + '.' + " " + r.name)
+
+    number = command_input(bcolors.BOLD + "Which Recipe?" + bcolors.ENDC,
+                            list(str(x) for x in range(0, len(recipes))) + ["Exit"])
+
+    if number == "Exit":
+        return
+
+    command = command_input(bcolors.BOLD + "Are you sure?" + bcolors.ENDC,
+                            ["Yes", "No"])
+
+    if command == "Yes":
+        app_session.session.delete(recipes[int(number)])
+        app_session.session.commit()
+        print(bcolors.OKCYAN + "Succesfully Deleted" + bcolors.ENDC)
+

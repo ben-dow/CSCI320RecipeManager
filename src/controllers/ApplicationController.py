@@ -1,6 +1,6 @@
 from src.controllers.RecipeController import RecipeController
 from src.controllers.MakeController import cook
-from src.controllers.PantryController import pantry_manager
+from src.controllers.PantryController import pantry
 from src.controllers.SearchController import search
 from src.controllers.authentication import authenticate
 from src.controllers.util import bcolors, command_input
@@ -15,7 +15,7 @@ def functionality_flow(app_session):
         "Search": search,
         "Cook": cook,
         "RecipeEditor": RecipeController,
-        "Pantry": pantry_manager,
+        "Pantry": pantry,
     }
     if command == "Logout":
         app_session.logout = True

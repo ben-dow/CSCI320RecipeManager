@@ -45,14 +45,14 @@ class Recipe(Base):
     id = Column(Integer, primary_key=True)
     created_by = Column(Integer, ForeignKey('users.id'), nullable=False)
     servings = Column(Integer)
-    cook_time = Column(Time)
+    cook_time = Column(Time, default=0)
     name = Column(String)
     description = Column(Text)
     difficulty = Column(Enum(DifficultyEnum))
     creation_date = Column(Date)
 
-    Steps = relationship("Step")
-    Ingredients = relationship("RecipeIngredients")
+    Steps = relationship("Step", cascade="all, delete")
+    Ingredients = relationship("RecipeIngredients", cascade="all, delete")
 
 
 class Category(Base):
