@@ -1,4 +1,4 @@
-from src.controllers.RecipeEditor import RecipeEditor
+from src.controllers.RecipeController import RecipeController
 from src.controllers.MakeController import cook
 from src.controllers.PantryController import pantry
 from src.controllers.SearchController import search
@@ -14,7 +14,7 @@ def functionality_flow(app_session):
     options = {
         "Search": search,
         "Cook": cook,
-        "RecipeEditor": RecipeEditor,
+        "RecipeEditor": RecipeController,
         "Pantry": pantry,
     }
     if command == "Logout":

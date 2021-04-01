@@ -2,7 +2,7 @@ import os
 
 from sqlalchemy.sql.functions import count, current_date
 
-from src.controllers.RecipeEditor import get_users_recipes
+from src.controllers.RecipeController import get_users_recipes
 from src.controllers.SearchController import search
 from src.controllers.util import bcolors, command_input, pretty_print_recipe
 from src.models import Category, UserPantry, Ingredient, CookedBy, Recipe

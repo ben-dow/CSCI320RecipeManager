@@ -1,6 +1,6 @@
 import enum
 
-from sqlalchemy import Column, Integer, String, Date, ForeignKey, Time, Text, Enum, Float
+from sqlalchemy import Column, Integer, String, Date, ForeignKey, Time, Text, Enum, Float, Table
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
@@ -15,10 +15,20 @@ class DifficultyEnum(enum.Enum):
     hard = 5
 
 
+# recipeIngredients = Table('recipe_ingredients',
+#                          Base.metadata,
+#                          Column('recipe_id', Integer, ForeignKey('recipes.id'), primary_key=True),
+#                          Column('ingredient_id', Integer, ForeignKey('ingredients.id'), primary_key=True),
+#                          Column('amount', Float, nullable=False)
+#                          )
+
+#
+
+
 class User(Base):
     __tablename__ = "users"
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, unique=True, nullable=False)
     username = Column(String)
     password = Column(String)
     creation_date = Column(Date)
@@ -42,6 +52,7 @@ class Recipe(Base):
 
     Steps = relationship("Step")
     Ingredients = relationship("RecipeIngredients")
+
 
 class Category(Base):
     __tablename__ = "categories"
