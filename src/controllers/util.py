@@ -33,8 +33,8 @@ def print_recipe_steps(recipe):
 
 def print_recipe_ingredients(recipe):
     print(bcolors.BOLD + "Ingredients:" + bcolors.ENDC)
-    for i in recipe.Ingredients:
-        print('\t' + i.Ingredient.name + ": " + str(i.amount))
+    for idx,i in enumerate(recipe.Ingredients):
+        print('\t' + str(idx) + ". " + i.Ingredient.name + ": " + str(i.amount))
 
 
 # ANSI Codes for Colors
