@@ -49,6 +49,7 @@ class Recipe(Base):
     name = Column(String)
     description = Column(Text)
     difficulty = Column(Enum(DifficultyEnum))
+    creation_date = Column(Date)
 
     Steps = relationship("Step")
     Ingredients = relationship("RecipeIngredients")

@@ -4,7 +4,7 @@ def command_input(question_text, options):
     while command not in options:
         if command != "":
             print(bcolors.FAIL + "INVALID COMMAND" + bcolors.ENDC)
-        command = input(question_text + " (" + ",".join(str(x) for x in options) + ") ")
+        command = input(question_text + " (" + ", ".join(str(x) for x in options) + ") ")
     return command
 
 
