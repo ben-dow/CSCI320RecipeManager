@@ -83,7 +83,30 @@ def search_get_results(app_session, command, search_type, sort_type):
                 .join(CookedBy) \
                 .group_by(Recipe).order_by(func.avg(CookedBy.rating).desc())
 
+    with_indices = []
+    count = 0
     for row in results:
-        pretty_print_recipe(row)
+        with_indices.append((count, row))
+        print(bcolors.BOLD + str(count) + bcolors.ENDC + "---" + row.name)
+        count += 1
+
+    which_to_print = ""
+
+    while which_to_print != "Exit":
+        which_to_print = input(bcolors.BOLD + "If you would like details on a specific recipe type its index here (or "
+                                              "Exit if not): " + bcolors.ENDC)
+
+        try:
+            which_to_print = int(which_to_print)
+        except ValueError:
+            print(bcolors.BOLD + "Index value must be a whole number, try again:" + bcolors.ENDC)
+            continue
+
+        try:
+            pretty_print_recipe(with_indices[which_to_print][1])
+        except IndexError:
+            print(bcolors.BOLD + "Index value out of range, try again:" + bcolors.ENDC)
+
+
 
     return
