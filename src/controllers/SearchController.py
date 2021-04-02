@@ -38,7 +38,7 @@ def search_get_results(app_session, command, search_type, sort_type):
         if (sort_type != "Rating"):
             # Query for the ingredient id being searched for
             try:
-                ingredient_id = app_session.session.query(Ingredient.id).filter(Ingredient.name == command)[0].id
+                ingredient_id = app_session.session.query(Ingredient.id).filter(Ingredient.name.like("%" + command + "%"))[0].id
             except IndexError:
                 print('It appears that ingredient doesn\'t exist. Try again now:')
                 return
@@ -50,7 +50,7 @@ def search_get_results(app_session, command, search_type, sort_type):
         else:
             # Query for the ingredient id being searched for
             try:
-                ingredient_id = app_session.session.query(Ingredient.id).filter(Ingredient.name == command)[0].id
+                ingredient_id = app_session.session.query(Ingredient.id).filter(Ingredient.name.like("%" + command + "%"))[0].id
             except IndexError:
                 print('It appears that ingredient doesn\'t exist. Try again now:')
                 return
@@ -63,23 +63,23 @@ def search_get_results(app_session, command, search_type, sort_type):
     elif search_type == "By Name":
         if sort_type != "Rating":
             results = app_session.session.query(Recipe) \
-                .filter(Recipe.name == command) \
+                .filter(Recipe.name.like("%" + command + "%")) \
                 .order_by(sort_order)
         else:
             results = app_session.session.query(Recipe) \
-                .filter(Recipe.name == command) \
+                .filter(Recipe.name.like("%" + command + "%")) \
                 .join(CookedBy) \
                 .group_by(Recipe).order_by(func.avg(CookedBy.rating).desc())
     elif search_type == "By Category":
         if sort_type != "Rating":
             results = app_session.session.query(Recipe) \
                 .join(Category) \
-                .filter(Category.category_type == command) \
+                .filter(Category.category_type.like("%" + command + "%")) \
                 .order_by(sort_order)
         else:
             results = app_session.session.query(Recipe) \
                 .join(Category) \
-                .filter(Category.category_type == command) \
+                .filter(Category.category_type.like("%" + command + "%")) \
                 .join(CookedBy) \
                 .group_by(Recipe).order_by(func.avg(CookedBy.rating).desc())
 
@@ -107,6 +107,4 @@ def search_get_results(app_session, command, search_type, sort_type):
         except IndexError:
             print(bcolors.BOLD + "Index value out of range, try again:" + bcolors.ENDC)
 
-
-
-    return
+    return results
