@@ -1,4 +1,7 @@
 # Provide Text and Possible Options, will return the command entered when a valid one is entered
+from src.models import Ingredient
+
+
 def command_input(question_text, options):
     command = ""
     while command not in options:
@@ -6,6 +9,14 @@ def command_input(question_text, options):
             print(bcolors.FAIL + "INVALID COMMAND" + bcolors.ENDC)
         command = input(question_text + " (" + ", ".join(str(x) for x in options) + ") ")
     return command
+
+
+# Pantry Utils
+
+def pretty_print_pantry(userPantry):
+    print(bcolors.HEADER + "Pantry: " + bcolors.ENDC)
+    for idx, item in enumerate(userPantry):
+        print('\t' + bcolors.BOLD + str(item.ingredient.name) + bcolors.ENDC)
 
 
 # Recipe Utils
@@ -33,7 +44,7 @@ def print_recipe_steps(recipe):
 
 def print_recipe_ingredients(recipe):
     print(bcolors.BOLD + "Ingredients:" + bcolors.ENDC)
-    for idx,i in enumerate(recipe.Ingredients):
+    for idx, i in enumerate(recipe.Ingredients):
         print('\t' + str(idx) + ". " + i.Ingredient.name + ": " + str(i.amount))
 
 
@@ -48,3 +59,11 @@ class bcolors:
     ENDC = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
+
+
+def print_ingredient_list_from_search(searchQuery, app_session):
+    ingredients = app_session.session.query(Ingredient).filter(Ingredient.name.like("%" + searchQuery + "%")).all()
+    for idx, i in enumerate(ingredients):
+        print(bcolors.BOLD + str(idx) + ". " + str(i.name) + bcolors.ENDC)
+
+    return ingredients

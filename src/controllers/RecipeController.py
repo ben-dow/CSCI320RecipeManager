@@ -1,9 +1,9 @@
-import os
-
 from src.controllers.util import bcolors, command_input, pretty_print_recipe, print_recipe_metadata, print_recipe_steps, \
-    print_recipe_ingredients
-from src.models import DifficultyEnum, Step, RecipeIngredients, Ingredient, Recipe
+    print_recipe_ingredients, print_ingredient_list_from_search
+from src.models import DifficultyEnum, Step, RecipeIngredients, Recipe
 
+# TODO A recipe cannot be deleted if another user has already madeit.
+# TODO A recipe can be in a category
 
 def RecipeController(app_session):
     command = ""
@@ -69,14 +69,6 @@ def update_ingredient_amount(ingredient, app_session):
     amount = input(bcolors.BOLD + "What amount should this be?" + bcolors.ENDC)
     ingredient.amount = float(amount)
     app_session.session.commit()
-
-
-def print_ingredient_list_from_search(searchQuery, app_session):
-    ingredients = app_session.session.query(Ingredient).filter(Ingredient.name.like("%" + searchQuery + "%")).all()
-    for idx, i in enumerate(ingredients):
-        print(bcolors.BOLD + str(idx) + ". " + str(i.name) + bcolors.ENDC)
-
-    return ingredients
 
 
 def create(app_session):

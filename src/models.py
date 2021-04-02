@@ -2,7 +2,7 @@ import enum
 
 from sqlalchemy import Column, Integer, String, Date, ForeignKey, Time, Text, Enum, Float, Table
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 
 Base = declarative_base()
 
@@ -13,16 +13,6 @@ class DifficultyEnum(enum.Enum):
     medium = 3
     medium_hard = 4
     hard = 5
-
-
-# recipeIngredients = Table('recipe_ingredients',
-#                          Base.metadata,
-#                          Column('recipe_id', Integer, ForeignKey('recipes.id'), primary_key=True),
-#                          Column('ingredient_id', Integer, ForeignKey('ingredients.id'), primary_key=True),
-#                          Column('amount', Float, nullable=False)
-#                          )
-
-#
 
 
 class User(Base):
@@ -101,7 +91,7 @@ class RecipeIngredients(Base):
 class UserPantry(Base):
     __tablename__ = "pantry"
 
-    pantry_item_id = Column(Integer, primary_key=True)  # for storing more than one of each ingredient
+    pantry_item_id = Column(Integer, primary_key=True, autoincrement=True)  # for storing more than one of each ingredient
     # ^ not required, will make execution of CookedBy slightly more difficult
     ingredient_id = Column(Integer, ForeignKey('ingredients.id'), nullable=False)
     user_id = Column(Integer, ForeignKey('users.id'), primary_key=True)
@@ -110,4 +100,4 @@ class UserPantry(Base):
     quantity_bought = Column(Float)  # not required
     current_quantity = Column(Float)  # scale can be float, so this must be as well
 
-    ingredient = relationship("Ingredient", backref="pantry")
+    ingredient = relationship("Ingredient", backref=backref("pantry", uselist=False))
