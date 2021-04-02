@@ -96,6 +96,9 @@ def search_get_results(app_session, command, search_type, sort_type):
         which_to_print = input(bcolors.BOLD + "If you would like details on a specific recipe type its index here (or "
                                               "Exit if not): " + bcolors.ENDC)
 
+        if which_to_print == "Exit":
+            pass
+
         try:
             which_to_print = int(which_to_print)
         except ValueError:

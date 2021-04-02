@@ -28,7 +28,6 @@ class User(Base):
     Pantry = relationship("UserPantry")
 
 
-# @jew4731's stab at creating a table. Need constraints
 class Recipe(Base):
     __tablename__ = "recipes"
 
@@ -43,6 +42,7 @@ class Recipe(Base):
 
     Steps = relationship("Step", cascade="all, delete")
     Ingredients = relationship("RecipeIngredients", cascade="all, delete")
+    CookedRecipes = relationship("CookedBy", cascade="all, delete")
 
 
 class Category(Base):

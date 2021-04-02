@@ -8,7 +8,7 @@ def pantry(app_session):
     print(bcolors.HEADER + "Update Your Pantry" + bcolors.ENDC)
     while command != "exit":
         command = command_input(bcolors.BOLD + "What do you want to do with your pantry?" + bcolors.ENDC,
-                                ["add", "remove", "view"])
+                                ["add", "remove", "view", "exit"])
         if command == "add":
             add(app_session)
         if command == "remove":
