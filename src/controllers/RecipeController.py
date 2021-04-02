@@ -241,34 +241,36 @@ def categorize(app_session):
     if recipe == None:
         return      # this means that there's nothing to categorize
 
+    print(bcolors.UNDERLINE + "Category Editor" + bcolors.ENDC)
     command = ""
-    pretty_print_recipe(recipe)
     while command != "Exit":
         command = command_input("Would you like to change this recipe's categories or add a new one?",
-                                ["Remove", "Add", "Exit"])
+                                ["Remove", "Add", "View", "Exit"])
         if command == "Exit":
             return
         if command == "Remove":
             remove_category(app_session, recipe)
         if command == "Add":
             add_category(app_session, recipe)
+        if command == "View":
+            print_recipe_categories(recipe)
 
     return
 
 
 def remove_category(app_session, recipe):
     print_recipe_categories(recipe)
-    command = command_input(bcolors.BOLD + "Which category will you remove?" + bcolors.ENDC,
-                            [list(str(x) for x in range(0, len(recipe.Categories))), "Exit"])
+    category = command_input(bcolors.BOLD + "Which category will you remove?" + bcolors.ENDC,
+                            list(str(x) for x in range(0, len(recipe.Categories))) + ["Exit"])
 
-    if command == "Exit":
+    if category == "Exit":
         return
 
-    command = command_input(bcolors.BOLD + "Are you sure?" + bcolors.ENDC,
+    confirmation = command_input(bcolors.BOLD + "Are you sure?" + bcolors.ENDC,
                             ["Yes", "No"])
 
-    if command == "Yes":
-        app_session.session.delete(recipe.Categories[int(command)])
+    if confirmation == "Yes":
+        app_session.session.delete(recipe.Categories[int(category)])
         app_session.session.commit()
         print(bcolors.OKCYAN + "Successfully Deleted" + bcolors.ENDC)
 
@@ -289,5 +291,3 @@ def add_category(app_session, recipe):
     print(bcolors.OKCYAN + "Successfully Added" + bcolors.ENDC)
 
     return
-
-

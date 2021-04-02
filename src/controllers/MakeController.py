@@ -197,9 +197,9 @@ def view_cooked(app_session):
     for name, scale, date, rating in cooked:
         # print the metadata
         print(bcolors.BOLD + name + bcolors.ENDC)
-        print("Scale: " + str(scale))
-        print("Date Cooked: " + str(date))
-        print("Rating:" + str(rating))
+        print('\t' + bcolors.BOLD + "Scale: " + bcolors.ENDC + str(scale))
+        print('\t' + bcolors.BOLD + "Date Cooked: " + bcolors.ENDC + str(date))
+        print('\t' + bcolors.BOLD + "Rating:" + + bcolors.ENDC + str(rating))
         # Limit the number of responses shown
         if idc % 10 == 0:
             command = command_input(bcolors.OKGREEN + "Keep going?", ["Yes", "Exit"])
