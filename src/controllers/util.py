@@ -25,7 +25,6 @@ def pretty_print_recipe(recipe):
     print_recipe_metadata(recipe)
     print_recipe_steps(recipe)
     print_recipe_ingredients(recipe)
-    print_recipe_categories(recipe)
 
 
 def print_recipe_metadata(recipe):
