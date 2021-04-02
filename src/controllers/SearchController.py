@@ -38,26 +38,26 @@ def search_get_results(app_session, command, search_type, sort_type):
         if (sort_type != "Rating"):
             # Query for the ingredient id being searched for
             try:
-                ingredient_id = app_session.session.query(Ingredient.id).filter(Ingredient.name.like("%" + command + "%"))[0].id
+                ingredient_ids = app_session.session.query(Ingredient.id).filter(Ingredient.name.like("%" + command + "%"))
             except IndexError:
                 print('It appears that ingredient doesn\'t exist. Try again now:')
                 return
 
             results = app_session.session.query(Recipe) \
                 .join(RecipeIngredients) \
-                .filter(RecipeIngredients.ingredient_id == ingredient_id) \
+                .filter(RecipeIngredients.ingredient_id.in_(ingredient_ids)) \
                 .order_by(sort_order)
         else:
             # Query for the ingredient id being searched for
             try:
-                ingredient_id = app_session.session.query(Ingredient.id).filter(Ingredient.name.like("%" + command + "%"))[0].id
+                ingredient_ids = app_session.session.query(Ingredient.id).filter(Ingredient.name.like("%" + command + "%"))
             except IndexError:
                 print('It appears that ingredient doesn\'t exist. Try again now:')
                 return
 
             results = app_session.session.query(Recipe) \
                 .join(RecipeIngredients) \
-                .filter(RecipeIngredients.ingredient_id == ingredient_id) \
+                .filter(RecipeIngredients.ingredient_id.in_(ingredient_ids)) \
                 .join(CookedBy) \
                 .group_by(Recipe).order_by(func.avg(CookedBy.rating).desc())
     elif search_type == "By Name":
