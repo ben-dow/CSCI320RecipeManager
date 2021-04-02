@@ -46,7 +46,7 @@ def make_recipe(app_session):
     # recipe_list = app_session.session.query(Recipe).filter(Recipe.id == 4020)
 
     # get the recipe from a search
-    recipe = pick_recipe(app_session)
+    recipe = simple_search_recipe(app_session, "Please Enter the Number of the Recipe you Would Like to Cook.")
     if recipe == None:
         return
 
@@ -80,7 +80,7 @@ def make_recipe(app_session):
     return
 
 
-def pick_recipe(app_session):
+def simple_search_recipe(app_session, question):
     search_type = command_input(bcolors.BOLD + "How would you like to search?" + bcolors.ENDC,
                                 ["By Ingredient", "By Name", "By Category", "Exit"])
     if search_type == "Exit":
@@ -102,7 +102,7 @@ def pick_recipe(app_session):
         return None
 
     # pick a recipe from the search criteria
-    print("Please Enter the Number of the Recipe you Would Like to Cook. (Or Type \"Exit\" to leave this menu)")
+    print(question + " (Or Type \"Exit\" to leave this menu)")
     command = command_input(bcolors.BOLD + "Which Recipe?" + bcolors.ENDC,
                             list(str(x) for x in range(0, recipe_list.count())) + ["Exit"])
 

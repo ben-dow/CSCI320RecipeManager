@@ -44,6 +44,7 @@ class Recipe(Base):
     Steps = relationship("Step", cascade="all, delete")
     Ingredients = relationship("RecipeIngredients", cascade="all, delete")
     CookedRecipes = relationship("CookedBy", cascade="all, delete")
+    Categories = relationship("Category")
 
 
 class Category(Base):

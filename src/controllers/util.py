@@ -25,6 +25,7 @@ def pretty_print_recipe(recipe):
     print_recipe_metadata(recipe)
     print_recipe_steps(recipe)
     print_recipe_ingredients(recipe)
+    print_recipe_categories(recipe)
 
 
 def print_recipe_metadata(recipe):
@@ -47,6 +48,11 @@ def print_recipe_ingredients(recipe):
     for idx, i in enumerate(recipe.Ingredients):
         print('\t' + str(idx) + ". " + i.Ingredient.name + ": " + str(i.amount))
 
+
+def print_recipe_categories(recipe):
+    print(bcolors.BOLD + "Categories:" + bcolors.ENDC)
+    for idx, i in enumerate(recipe.Categories):
+        print('\t' + str(idx) + ". " + i.category_type)
 
 # ANSI Codes for Colors
 class bcolors:
