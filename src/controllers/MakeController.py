@@ -139,7 +139,7 @@ def get_quantity(app_session, recipe, scale=1):
         if ingr.ingredient_id in p_dict:
             required_amount = p_dict[ingr.ingredient_id] - ingr.amount * scale
             if required_amount > 0:
-                ingr_list.append([ingr.Ingredient, required_amount])
+                ingr_list.append([ingr.Ingredient, ingr.amount * scale])
             else:
                 return [ingr.Ingredient.name, abs(required_amount)]
         else:       # if not enough ingredient, returns offending party's name name and the deficit
@@ -169,10 +169,16 @@ def get_scale():
 
 # add a new row in the CookedBy table
 def add_cooked_by(app_session, recipe, rating, scale):
-    new_cooked_by = CookedBy(recipe_id=recipe.id, user_id=app_session.user.id, rating=rating, scale=scale,
-                             cook_date=date)
+    cb = app_session.user.CookedBy # get list of user's past recipes
 
-    app_session.user.Pantry.append(new_cooked_by)  # add the new row, commit it
+    new_cooked_by = CookedBy(recipe_id=recipe.id, user_id=app_session.user.id, rating=rating, scale=scale,
+                             cook_date=date.today())    # create row for this recipe
+
+    for i in cb:    # delete previous instances of this recipe
+        if (i.recipe_id == recipe.id) & (app_session.user.id == i.user_id):
+            app_session.session.delete(i)
+
+    app_session.user.CookedBy.append(new_cooked_by)  # add the new row, commit it
     app_session.session.commit()
     return
 

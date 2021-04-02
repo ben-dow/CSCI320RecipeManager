@@ -26,6 +26,7 @@ class User(Base):
 
     Recipes = relationship("Recipe")
     Pantry = relationship("UserPantry")
+    CookedBy = relationship("CookedBy")
 
 
 class Recipe(Base):

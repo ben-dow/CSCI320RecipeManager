@@ -84,7 +84,6 @@ def reduce_quantity_of_item(app_session, ingredientObject, reduceByQuantity):
                 i.current_quantity = i.current_quantity - reduceByQuantity
                 app_session.session.commit()
                 return True
-            return False
     return False
 
 # todo
