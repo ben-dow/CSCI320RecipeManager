@@ -72,7 +72,9 @@ def remove(app_session):
         return
 
     if command != "exit":
-        pass
+        app_session.session.delete(pantry[int(command)])
+        app_session.session.commit()
+        print(bcolors.OKCYAN + "Succesfully Deleted" + bcolors.ENDC)
 
 
 def reduce_quantity_of_item(app_session, ingredientObject, reduceByQuantity):
