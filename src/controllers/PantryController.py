@@ -49,7 +49,7 @@ def add(app_session):
     quantity_bought = input('Quantity Bought: ')
 
     new_ingredient = UserPantry(ingredient_id=ingredients[int(command)].id, expiration_date=expiration_date,
-                                purchase_date=purchase_date, quantity_bought=float(quantity_bought))
+                                purchase_date=purchase_date, quantity_bought=float(quantity_bought), current_quantity=float(quantity_bought))
     app_session.user.Pantry.append(new_ingredient)
     app_session.session.commit()
 
@@ -73,6 +73,19 @@ def remove(app_session):
 
     if command != "exit":
         pass
+
+
+def reduce_quantity_of_item(app_session, ingredientObject, reduceByQuantity):
+    user_pantry = app_session.user.Pantry
+
+    for i in user_pantry:
+        if i.ingredient_id == ingredientObject.id:
+            if i.current_quantity > reduceByQuantity:
+                i.current_quantity = i.current_quantity - reduceByQuantity
+                app_session.session.commit()
+                return True
+            return False
+    return False
 
 # todo
 # function for adding items to pantry
