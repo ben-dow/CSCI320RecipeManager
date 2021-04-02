@@ -69,13 +69,13 @@ def make_recipe(app_session):
     command = command_input(bcolors.BOLD + "On a scale from 1 to 5, how was this dish?" + bcolors.ENDC,
                             ['1', '2', '3', '4', '5'])
 
+    # mark this moment down in history
+    add_cooked_by(app_session, recipe, int(command), scale)
+
     # since all ingredients are guaranteed to be there, make the changes
     for ingr, amount in ingr_list:
         if not reduce_quantity_of_item(app_session, ingr, amount):
             return
-
-    # mark this moment down in history
-    add_cooked_by(app_session, recipe, int(command), scale)
 
     return
 
