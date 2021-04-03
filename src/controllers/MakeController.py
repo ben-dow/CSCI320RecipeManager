@@ -161,6 +161,8 @@ def get_scale():
 
         try:  # check for valid input
             scale = float(command)
+            if scale <= 0:
+                scale = float()     # must be greater than zero
         except ValueError:
             print(bcolors.FAIL + "INVALID SCALE. Must be an integer or decimal number." + bcolors.ENDC)
 
