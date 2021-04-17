@@ -112,7 +112,7 @@ def simple_search_recipe(app_session, question):
     return recipe_list[int(command)]
 
 
-# Print current quantity of ingredients
+# Print current quantity of recipe ingredients in the current user's pantry
 def get_quantity(app_session, recipe, scale=1):
     # below is the SLQ statement to run. Returns all ingredients from a recipe and their quantity in a user's pantry
     """
