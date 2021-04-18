@@ -2,6 +2,7 @@ from src.controllers.util import bcolors, command_input, pretty_print_recipe, pr
     print_recipe_ingredients, print_ingredient_list_from_search
 from src.models import DifficultyEnum, Step, RecipeIngredients, Recipe
 
+
 # TODO A recipe cannot be deleted if another user has already madeit.
 # TODO A recipe can be in a category
 
@@ -60,6 +61,7 @@ def update_recipe_info(infoName, recipe, app_session):
             recipe.difficulty = DifficultyEnum.hard
         print(bcolors.OKGREEN + "Change Successful" + bcolors.ENDC)
 
+
 def update_recipe_step(step, app_session):
     instruction = input(bcolors.BOLD + "Enter the new step instruction for the recipe: " + bcolors.ENDC)
     step.instruction = instruction
@@ -80,7 +82,7 @@ def create(app_session):
 
     edit_info(app_session, recipe)
     edit_ingredients(app_session, recipe)
-    edit_steps(app_session,recipe)
+    edit_steps(app_session, recipe)
 
 
 def edit(app_session):
@@ -124,7 +126,6 @@ def edit_info(app_session, recipe):
         update_recipe_info(command, recipe, app_session)
         app_session.session.commit()
         print_recipe_metadata(recipe)
-
 
     if command == "Exit":
         return
@@ -207,6 +208,7 @@ def edit_ingredients(app_session, recipe):
                 app_session.session.delete(recipe.Ingredients[int(command)])
                 app_session.session.commit()
 
+
 def delete(app_session):
     recipes = get_users_recipes(app_session)
 
@@ -217,7 +219,7 @@ def delete(app_session):
         print(bcolors.BOLD + str(idx) + bcolors.ENDC + '.' + " " + r.name)
 
     number = command_input(bcolors.BOLD + "Which Recipe?" + bcolors.ENDC,
-                            list(str(x) for x in range(0, len(recipes))) + ["Exit"])
+                           list(str(x) for x in range(0, len(recipes))) + ["Exit"])
 
     if number == "Exit":
         return
@@ -229,4 +231,3 @@ def delete(app_session):
         app_session.session.delete(recipes[int(number)])
         app_session.session.commit()
         print(bcolors.OKCYAN + "Succesfully Deleted" + bcolors.ENDC)
-

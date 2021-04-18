@@ -4,11 +4,12 @@ from src.controllers.PantryController import pantry
 from src.controllers.SearchController import search
 from src.controllers.authentication import authenticate
 from src.controllers.util import bcolors, command_input
+from src.controllers.RecommendationController import RecommendationController
 
 
 def functionality_flow(app_session):
     command = command_input(bcolors.BOLD + "What would you like todo?" + bcolors.ENDC,
-                            ["Search", "Cook", "RecipeEditor", "Pantry", "Logout"])
+                            ["Search", "Cook", "RecipeEditor", "Pantry", "Recommendation", "Logout"])
 
     # Emulate a Switch Statement
     options = {
@@ -16,6 +17,7 @@ def functionality_flow(app_session):
         "Cook": cook,
         "RecipeEditor": RecipeController,
         "Pantry": pantry,
+        "Recommendation":RecommendationController
     }
     if command == "Logout":
         app_session.logout = True

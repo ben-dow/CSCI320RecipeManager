@@ -1,6 +1,5 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-
 from src.controllers.ApplicationController import mainApplicationFlow
 from src.credentials import username as user, password as passwrd
 from src.models import *
@@ -14,8 +13,6 @@ Session.configure(bind=db)
 
 # Create the Models in the Database
 Base.metadata.create_all(db)
-
-
 
 # Application
 mainApplicationFlow(Session())
