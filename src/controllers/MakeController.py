@@ -46,7 +46,7 @@ def make_recipe(app_session):
     # recipe_list = app_session.session.query(Recipe).filter(Recipe.id == 4020)
 
     # get the recipe from a search
-    recipe = pick_recipe(app_session)
+    recipe = simple_search_recipe(app_session, "Please Enter the Number of the Recipe you Would Like to Cook.")
     if recipe == None:
         return
 
@@ -80,7 +80,7 @@ def make_recipe(app_session):
     return
 
 
-def pick_recipe(app_session):
+def simple_search_recipe(app_session, question):
     search_type = command_input(bcolors.BOLD + "How would you like to search?" + bcolors.ENDC,
                                 ["By Ingredient", "By Name", "By Category", "Exit"])
     if search_type == "Exit":
@@ -102,7 +102,7 @@ def pick_recipe(app_session):
         return None
 
     # pick a recipe from the search criteria
-    print("Please Enter the Number of the Recipe you Would Like to Cook. (Or Type \"Exit\" to leave this menu)")
+    print(question + " (Or Type \"Exit\" to leave this menu)")
     command = command_input(bcolors.BOLD + "Which Recipe?" + bcolors.ENDC,
                             list(str(x) for x in range(0, recipe_list.count())) + ["Exit"])
 
@@ -112,7 +112,7 @@ def pick_recipe(app_session):
     return recipe_list[int(command)]
 
 
-# Print current quantity of ingredients
+# Print current quantity of recipe ingredients in the current user's pantry
 def get_quantity(app_session, recipe, scale=1):
     # below is the SLQ statement to run. Returns all ingredients from a recipe and their quantity in a user's pantry
     """
@@ -161,6 +161,8 @@ def get_scale():
 
         try:  # check for valid input
             scale = float(command)
+            if scale <= 0:
+                scale = float()     # must be greater than zero
         except ValueError:
             print(bcolors.FAIL + "INVALID SCALE. Must be an integer or decimal number." + bcolors.ENDC)
 
@@ -197,9 +199,9 @@ def view_cooked(app_session):
     for name, scale, date, rating in cooked:
         # print the metadata
         print(bcolors.BOLD + name + bcolors.ENDC)
-        print("Scale: " + str(scale))
-        print("Date Cooked: " + str(date))
-        print("Rating:" + str(rating))
+        print('\t' + bcolors.BOLD + "Scale: " + bcolors.ENDC + str(scale))
+        print('\t' + bcolors.BOLD + "Date Cooked: " + bcolors.ENDC + str(date))
+        print('\t' + bcolors.BOLD + "Rating:" + + bcolors.ENDC + str(rating))
         # Limit the number of responses shown
         if idc % 10 == 0:
             command = command_input(bcolors.OKGREEN + "Keep going?", ["Yes", "Exit"])

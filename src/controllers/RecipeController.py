@@ -1,6 +1,7 @@
+from src.controllers.MakeController import simple_search_recipe
 from src.controllers.util import bcolors, command_input, pretty_print_recipe, print_recipe_metadata, print_recipe_steps, \
-    print_recipe_ingredients, print_ingredient_list_from_search
-from src.models import DifficultyEnum, Step, RecipeIngredients, Recipe
+    print_recipe_ingredients, print_ingredient_list_from_search, print_recipe_categories
+from src.models import DifficultyEnum, Step, RecipeIngredients, Recipe, Category
 
 
 # TODO A recipe cannot be deleted if another user has already madeit.
@@ -11,15 +12,16 @@ def RecipeController(app_session):
     print(bcolors.HEADER + "Recipe Editor" + bcolors.ENDC)
     while command != "Exit":
         command = command_input(bcolors.BOLD + "What would you like todo?" + bcolors.ENDC,
-                                ["Create", "Edit", "Delete", "Exit"])
+                                ["Create", "Edit", "Delete", "Categorize", "Exit"])
 
         if command == "Edit":
             edit(app_session)
-
         if command == "Create":
             create(app_session)
         if command == "Delete":
             delete(app_session)
+        if command == "Categorize":
+            categorize(app_session)
 
     print(bcolors.OKBLUE + "Exiting Recipe Editor" + bcolors.ENDC)
 
@@ -61,7 +63,6 @@ def update_recipe_info(infoName, recipe, app_session):
             recipe.difficulty = DifficultyEnum.hard
         print(bcolors.OKGREEN + "Change Successful" + bcolors.ENDC)
 
-
 def update_recipe_step(step, app_session):
     instruction = input(bcolors.BOLD + "Enter the new step instruction for the recipe: " + bcolors.ENDC)
     step.instruction = instruction
@@ -82,7 +83,7 @@ def create(app_session):
 
     edit_info(app_session, recipe)
     edit_ingredients(app_session, recipe)
-    edit_steps(app_session, recipe)
+    edit_steps(app_session,recipe)
 
 
 def edit(app_session):
@@ -126,6 +127,7 @@ def edit_info(app_session, recipe):
         update_recipe_info(command, recipe, app_session)
         app_session.session.commit()
         print_recipe_metadata(recipe)
+
 
     if command == "Exit":
         return
@@ -208,7 +210,6 @@ def edit_ingredients(app_session, recipe):
                 app_session.session.delete(recipe.Ingredients[int(command)])
                 app_session.session.commit()
 
-
 def delete(app_session):
     recipes = get_users_recipes(app_session)
 
@@ -219,7 +220,7 @@ def delete(app_session):
         print(bcolors.BOLD + str(idx) + bcolors.ENDC + '.' + " " + r.name)
 
     number = command_input(bcolors.BOLD + "Which Recipe?" + bcolors.ENDC,
-                           list(str(x) for x in range(0, len(recipes))) + ["Exit"])
+                            list(str(x) for x in range(0, len(recipes))) + ["Exit"])
 
     if number == "Exit":
         return
@@ -230,4 +231,63 @@ def delete(app_session):
     if command == "Yes":
         app_session.session.delete(recipes[int(number)])
         app_session.session.commit()
-        print(bcolors.OKCYAN + "Succesfully Deleted" + bcolors.ENDC)
+        print(bcolors.OKCYAN + "Successfully Deleted" + bcolors.ENDC)
+
+
+def categorize(app_session):
+    print(bcolors.BOLD + bcolors.UNDERLINE + "Categorize a Recipe" + bcolors.ENDC)  # header
+
+    recipe = simple_search_recipe(app_session, "Please Enter the Number of the Recipe you Would Like to Categorize.")
+    if recipe == None:
+        return      # this means that there's nothing to categorize
+
+    print(bcolors.UNDERLINE + "Category Editor" + bcolors.ENDC)
+    command = ""
+    while command != "Exit":
+        command = command_input("Would you like to change this recipe's categories or add a new one?",
+                                ["Remove", "Add", "View", "Exit"])
+        if command == "Exit":
+            return
+        if command == "Remove":
+            remove_category(app_session, recipe)
+        if command == "Add":
+            add_category(app_session, recipe)
+        if command == "View":
+            print_recipe_categories(recipe)
+
+    return
+
+
+def remove_category(app_session, recipe):
+    print_recipe_categories(recipe)
+    category = command_input(bcolors.BOLD + "Which category will you remove?" + bcolors.ENDC,
+                            list(str(x) for x in range(0, len(recipe.Categories))) + ["Exit"])
+
+    if category == "Exit":
+        return
+
+    confirmation = command_input(bcolors.BOLD + "Are you sure?" + bcolors.ENDC,
+                            ["Yes", "No"])
+
+    if confirmation == "Yes":
+        app_session.session.delete(recipe.Categories[int(category)])
+        app_session.session.commit()
+        print(bcolors.OKCYAN + "Successfully Deleted" + bcolors.ENDC)
+
+    return
+
+
+def add_category(app_session, recipe):
+    print_recipe_categories(recipe)
+    category_type = input(bcolors.BOLD + "Enter the new category type: " + bcolors.ENDC)
+
+    for i in recipe.Categories:
+        if i.category_type == category_type:
+            print(bcolors.FAIL + "Error: This recipe already has this category!" + bcolors.ENDC)
+
+    new_category_row = Category(category_type=category_type, recipe_id=recipe.id)
+    recipe.Categories.append(new_category_row)
+    app_session.session.commit()
+    print(bcolors.OKCYAN + "Successfully Added" + bcolors.ENDC)
+
+    return
