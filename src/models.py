@@ -19,14 +19,14 @@ class User(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, unique=True, nullable=False)
-    username = Column(String)
-    password = Column(String)
-    creation_date = Column(Date)
+    username = Column(String, nullable=False)
+    password = Column(String, nullable=False)
+    creation_date = Column(Date, nullable=False)
     last_access_date = Column(Date)
 
     Recipes = relationship("Recipe")
-    Pantry = relationship("UserPantry")
-    CookedBy = relationship("CookedBy")
+    Pantry = relationship("UserPantry", cascade="all, delete")
+    CookedBy = relationship("CookedBy", cascade="all, delete")
 
 
 class Recipe(Base):
@@ -34,12 +34,12 @@ class Recipe(Base):
 
     id = Column(Integer, primary_key=True)
     created_by = Column(Integer, ForeignKey('users.id'), nullable=False)
-    servings = Column(Integer)
-    cook_time = Column(Time, default=0)
-    name = Column(String)
+    servings = Column(Integer, nullable=False)
+    cook_time = Column(Time, default=0, nullable=False)
+    name = Column(String, nullable=False)
     description = Column(Text)
     difficulty = Column(Enum(DifficultyEnum))
-    creation_date = Column(Date)
+    creation_date = Column(Date, nullable=False)
 
     Steps = relationship("Step", cascade="all, delete")
     Ingredients = relationship("RecipeIngredients", cascade="all, delete")
@@ -67,7 +67,7 @@ class Ingredient(Base):
 
     id = Column(Integer, primary_key=True)
     aisle = Column(String)
-    name = Column(String)
+    name = Column(String, nullable=False)
 
 
 class CookedBy(Base):
@@ -75,8 +75,8 @@ class CookedBy(Base):
 
     recipe_id = Column(Integer, ForeignKey('recipes.id'), primary_key=True)
     user_id = Column(Integer, ForeignKey('users.id'), primary_key=True)
-    rating = Column(Integer)  # uncertain what type this should be
-    scale = Column(Float)  # Scale can be INT or FLOAT; float seems better
+    rating = Column(Integer, nullable=False)
+    scale = Column(Float, default=1, nullable=False)
     cook_date = Column(Date, nullable=False)
 
 
@@ -97,9 +97,9 @@ class UserPantry(Base):
     # ^ not required, will make execution of CookedBy slightly more difficult
     ingredient_id = Column(Integer, ForeignKey('ingredients.id'), nullable=False)
     user_id = Column(Integer, ForeignKey('users.id'), primary_key=True)
-    expiration_date = Column(Date)
-    purchase_date = Column(Date)
-    quantity_bought = Column(Float)  # not required
-    current_quantity = Column(Float)  # scale can be float, so this must be as well
+    expiration_date = Column(Date, nullable=False)
+    purchase_date = Column(Date, nullable=False)
+    quantity_bought = Column(Float, nullable=False)  # not required
+    current_quantity = Column(Float, nullable=False)  # scale can be float, so this must be as well
 
     ingredient = relationship("Ingredient", backref=backref("pantry", uselist=False))
