@@ -35,7 +35,7 @@ def recently_added(app_session):
 def in_pantry(app_session):
     recipes = app_session.session.query(Recipe).join(RecipeIngredients, Recipe.id == RecipeIngredients.recipe_id)\
         .join(UserPantry, (UserPantry.ingredient_id == RecipeIngredients.ingredient_id and
-              RecipeIngredients.amount >= UserPantry.current_quantity))\
+              RecipeIngredients.amount <= UserPantry.current_quantity))\
         .join(CookedBy, Recipe.id == CookedBy.recipe_id)\
         .filter().order_by(CookedBy.rating).limit(50).all()
     for idx, r in enumerate(recipes):
