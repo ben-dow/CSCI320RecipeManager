@@ -51,31 +51,28 @@ def for_you(app_session):
      - Note the last and second nested queries are just the User-CookedBy relationship
         table.
 
-    select r.name, c1.rating from recipes as r, cookedby as c1
-    where r.id = c1.recipe_id and c1.user_id in (
-        --Find the users who make the same recipes as you
-        select c2.user_id from cookedby as c2
-        where c2.user_id <> USER_ID and c2.recipe_id in (
-            --Recipes cooked by the specified user
-            select c3.recipe_id
-            from cookedby as c3
-            where user_id = 7108))
-    --Prevent it from recommending something you have already cooked
-    and c1.recipe_id not in (
-        --Recipes cooked by the specified user
-        select c4.recipe_id from cookedby as c4
-        where user_id = 7108)
+    select distinct r1.name, c1.rating from recipes as r1
+    join cookedby c1 on r1.id = c1.recipe_id
+    where c1.user_id in (
+        select distinct c_f.user_id from cookedby as c_f
+        join (
+            select r_u.id from recipes as r_u
+            join cookedby as c_u on r_u.id = c_u.recipe_id
+            where c_u.user_id = USER_ID)
+        as r_u2 on c_f.recipe_id = r_u2.id
+        and c_f.user_id <> USER_ID)
+    and r1.id not in (
+        select r_u.id from recipes as r_u
+        join cookedby as c_u on r_u.id = c_u.recipe_id
+        where c_u.user_id = USER_ID)
     order by c1.rating desc
-
-    Here is some python code that doesn't work
-        user_cooked = app_session.session.query(CookedBy.recipe_id).filter(CookedBy.user_id == app_session.user.id)
-        neighbors = app_session.session.query(CookedBy.user_id).filter(CookedBy.user_id != app_session.user.id)\
-            .filter(CookedBy.recipe_id in user_cooked)y
-        recipes = app_session.session.query(Recipe).join(neighbors.recipe_id == Recipe.id).limit(50).all()
     """
-    recipes = app_session.session.query(Recipe).join(CookedBy, Recipe.id == CookedBy.recipe_id)\
-        .join(User, CookedBy.user_id == User.id)\
-        .filter()\
-        .order_by(CookedBy.rating).join(User).limit(50).all()
-    for idx, r in enumerate(recipes):
+    user_cooked = app_session.session.query(Recipe.id).join(CookedBy, Recipe.id == CookedBy.recipe_id)\
+                    .filter(CookedBy.user_id == app_session.user.id).all()
+    friends = app_session.session.query(CookedBy.user_id).join(Recipe, CookedBy.recipe_id == Recipe.id)\
+                    .filter(CookedBy.recipe_id.in_(user_cooked), CookedBy.user_id != app_session.user.id).all()
+    rec_recipes = app_session.session.query(Recipe).join(CookedBy, CookedBy.recipe_id == Recipe.id)\
+                    .filter((CookedBy.user_id.in_(friends)), Recipe.id.notin_(user_cooked))\
+                    .order_by(CookedBy.rating).limit(50).all()
+    for idx, r in enumerate(rec_recipes):
         print(bcolors.BOLD + str(idx) + ". " + bcolors.ENDC + r.name)
